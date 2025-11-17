@@ -1,137 +1,86 @@
-# **README — MAL2018 (Information Management & Retrieval)**
+# **README – MAL2018 (Information Management & Retrieval)**
 
-### **TrailService Micro-Service Implementation**
+### *TrailService Micro-Service*
 
-```md
-# TrailService Micro-Service
+# TrailService Micro-Service  
+MAL2018 – Information Management and Retrieval  
+Author: OOI WEI CHYEH (BSCS2509254)
 
-MAL2018 – Information Management & Retrieval  
-Author: [Your Full Name]
+## 1. Introduction
+This repository documents the analysis, design, and initial implementation stages for the TrailService micro-service. The service is responsible for managing trail information, location points, and ownership details as part of a wider well-being trail application. The focus is on producing a clear and reliable data structure supported by secure and maintainable SQL operations.
 
-## 1. Overview
+The repository reflects the required deliverables for the MAL2018 coursework, demonstrating the progression from problem analysis to a working relational design.
 
-This repository contains the design, data modelling, SQL implementation, and API preparation for the **TrailService** micro-service, part of a larger well-being trail application.  
-My role is to design and implement the section responsible for:
+## 2. Scope of Work
+The work presented includes:
 
-- Managing trails
-- Storing location points
-- Linking trails to their owners
-- Providing secure and structured access through an API
-
-This project combines database modelling practices with secure API design, reflecting the principles covered in the module.
-
----
-
-## 2. Purpose of This Commit
-
-This initial commit includes all early-stage deliverables required for CW1, focusing on data analysis, schema design, and database implementation before writing the micro-service code.
-
-The commit contains:
-
-- Full normalisation steps from UNF → 3NF
+- A complete normalisation process (UNF to 3NF)
 - A partial ERD derived from the normalised relations
 - A final ERD refined through additional assumptions
-- SQL scripts for the CW1 schema
-- Evidence screenshots demonstrating successful table creation, sample data, views, triggers, and stored procedures
-- A scaffold for the TrailService Python API
+- SQL implementation for schema `CW1`, covering:
+  - Table creation
+  - Sample data insertion
+  - A combined view for trails and locations
+  - CRUD stored procedures
+  - A trigger for audit logging
+- Evidence showing successful execution of SQL components
+- A basic folder structure for the API to be developed in CW2
 
-The structure and clarity mirror industry standards for building secure, maintainable micro-services.
-
----
+Each component is presented to demonstrate accuracy, clarity, and a consistent design approach.
 
 ## 3. Repository Structure
 ```
 
-<!--
 documentation/
-├── normalisation/
-├── erd/
-└── design_rationale.md
+normalisation/
+erd/
+design_rationale.md
 sql/
-├── cw1/
-└── evidence/
+cw1/
+evidence/
 api/
-└── skeleton/
-.gitignore
+skeleton/
 README.md
 
 ```
 
-Each directory corresponds directly to an assessment requirement and helps track the progression toward the final CW2 micro-service implementation.
--->
+This structure separates analytical documents, SQL work, and early API preparation, making the development process transparent and easy to review.
 
----
+## 4. Design Highlights
+### 4.1 Normalisation
+The normalisation work ensures the database design avoids redundancy and update anomalies. All relations were examined for functional dependencies, leading to a set of 3NF tables with clear primary and foreign keys.
 
-## 4. Key Work Included in This Phase
+### 4.2 Entity Relationship Diagrams
+Two ERDs are included:
+- A partial ERD generated directly from the 3NF relations  
+- A final ERD incorporating assumptions regarding ownership, trail structure, and location ordering
 
-### ✔ Normalisation (UNF → 3NF)
+The diagrams support the logical structure of the TrailService and justify the chosen relationships.
 
-A step-by-step breakdown showing:
+### 4.3 SQL Schema and Functionality
+The SQL scripts demonstrate:
+- Correct implementation of the schema
+- Clean handling of trail and location data
+- Secure data manipulation through stored procedures
+- Controlled visibility through a structured view
+- Audit support with a trail creation trigger
 
-- Removal of repeating groups
-- Establishing atomic values
-- Eliminating partial and transitive dependencies
-- Final 3NF relations with clear reasoning
+These features contribute to a robust foundation for the micro-service.
 
-This ensures that stored data remains consistent and secure.
+## 5. Security and Integrity Considerations
+The design choices reflect a security-aware approach suitable for a cybersecurity programme. Key considerations include:
+- Avoiding duplication of sensitive information
+- Maintaining referential integrity throughout all relations
+- Restricting operations to stored procedures rather than direct table access
+- Using triggers to support accountability and traceability
+- Preparing the API structure for secure handling of external requests in CW2
 
-### ✔ Entity Relationship Diagrams
+## 6. Academic Context
+All work contained in this repository is produced for the module MAL2018 – Information Management and Retrieval. The documentation and implementation demonstrate analytical reasoning, accurate application of relational theory and preparation for practical micro-service development.
 
-Two forms are included:
+Any assistance obtained from AI tools is formally declared in the final written submission.
 
-1. **Partial ERD** (from normalised tables)
-2. **Final ERD** (after merging with derived design requirements)
-
-All relationships use clear naming conventions, primary keys, and foreign key constraints.
-
-### ✔ SQL Implementation – Schema `CW1`
-
-Includes:
-
-- Table creation
-- Sample data
-- A view combining trail and location information
-- CRUD stored procedures
-- A trigger to log trail creation
-- Demonstration screenshots showing results
-
-### ✔ API Skeleton
-
-A minimal FastAPI/Flask-style structure to prepare for CW2, including:
-
-- Project folders
-- Placeholder routes
-- Draft Swagger definition file
-
----
-
-## 5. Security and Data Integrity Considerations
-
-Although full implementation appears in CW2, data protection thinking already guides this stage:
-
-- Sensitive information is not duplicated; authentication stays with an external service
-- Database structure promotes consistent updates
-- Stored procedures reduce the risk of injection
-- Views and triggers provide controlled visibility and auditing
-
-This aligns with secure development practices emphasised within cybersecurity.
-
----
-
-## 6. Academic Note
-
-This repository reflects the expected progression from modelling → database implementation → API preparation.  
-All development decisions are justified in the included markdown files.
-
-Any AI assistance is documented in the final report according to module requirements.
-
----
-
-## 7. Contact
-
-Maintained by:  
-**[OOI WEI CHYEH, BSCS2509254] **
-
-```
-
-```
+## 7. Maintainer
+OOI WEI CHYEH  
+BSc (Hons) Cyber Security  
+University of Plymouth
