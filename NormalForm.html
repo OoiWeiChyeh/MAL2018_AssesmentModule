@@ -1,344 +1,455 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trail Normalisation</title>
+<svg viewBox="0 0 1800 2400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
     <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f5f5f5;
-      }
-      h1 {
-        color: #003d82;
-        text-align: center;
-        font-size: 2.5em;
-        margin-bottom: 40px;
-        background: linear-gradient(to right, #ffffcc, #ffeb99);
-        padding: 20px;
-        border-radius: 10px;
-      }
-      .container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 40px;
-      }
-      .column {
-        background-color: white;
-        border: 3px solid #003d82;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-      .column h2 {
-        color: #003d82;
-        text-align: center;
-        margin-top: 0;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #003d82;
-        font-size: 1.5em;
-      }
-      .attribute {
-        padding: 8px;
-        margin: 5px 0;
-        background-color: #f9f9f9;
-        border-left: 4px solid #0066cc;
-        font-weight: 500;
-      }
-      .pk {
-        background-color: #fff3cd;
-        border-left: 4px solid #ffc107;
-        font-weight: bold;
-      }
-      .fk {
-        background-color: #d4edda;
-        border-left: 4px solid #28a745;
-        font-weight: bold;
-      }
-      .repeating {
-        background-color: #f8d7da;
-        border-left: 4px solid #dc3545;
-        font-style: italic;
-      }
-      .composite-key {
-        background-color: #e7f3ff;
-        border-left: 4px solid #0066cc;
-        font-weight: bold;
-      }
-      .relations {
-        background-color: white;
-        padding: 20px;
-        border: 3px solid #003d82;
-        border-radius: 8px;
-        margin-top: 30px;
-      }
-      .relations h2 {
-        color: #003d82;
-        border-bottom: 2px solid #003d82;
-        padding-bottom: 10px;
-      }
-      .relation-box {
-        background-color: #ffffcc;
-        border: 2px solid #003d82;
-        padding: 15px;
-        margin: 15px 0;
-        border-radius: 5px;
-      }
-      .relation-name {
-        font-weight: bold;
-        color: #003d82;
-        font-size: 1.2em;
-        margin-bottom: 10px;
-      }
-      .legend {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin: 30px 0;
-        flex-wrap: wrap;
-      }
-      .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .legend-box {
-        width: 30px;
-        height: 20px;
-        border-radius: 3px;
-      }
+      .entity-box { fill: white; stroke: #003d82; stroke-width: 2; }
+      .entity-name { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #003d82; }
+      .attribute { font-family: Arial, sans-serif; font-size: 11px; fill: #333; }
+      .pk { font-weight: bold; text-decoration: underline; }
+      .fk { font-style: italic; }
+      .relationship-line { stroke: #003d82; stroke-width: 1.5; fill: none; }
+      .cardinality { font-family: Arial, sans-serif; font-size: 11px; fill: #003d82; font-weight: bold; }
+      .relationship-label { font-family: Arial, sans-serif; font-size: 10px; fill: #666; }
     </style>
-  </head>
-  <body>
-    <h1>Trail Normalisation</h1>
+  </defs>
 
-    <div class="legend">
-      <div class="legend-item">
-        <div
-          class="legend-box"
-          style="background-color: #fff3cd; border: 2px solid #ffc107"
-        ></div>
-        <span>Primary Key (PK)</span>
-      </div>
-      <div class="legend-item">
-        <div
-          class="legend-box"
-          style="background-color: #d4edda; border: 2px solid #28a745"
-        ></div>
-        <span>Foreign Key (FK)</span>
-      </div>
-      <div class="legend-item">
-        <div
-          class="legend-box"
-          style="background-color: #f8d7da; border: 2px solid #dc3545"
-        ></div>
-        <span>Repeating Group</span>
-      </div>
-      <div class="legend-item">
-        <div
-          class="legend-box"
-          style="background-color: #e7f3ff; border: 2px solid #0066cc"
-        ></div>
-        <span>Composite Key</span>
-      </div>
-    </div>
+  <!-- Title -->
+  <rect x="50" y="20" width="1700" height="60" fill="#ffffcc" stroke="#003d82" stroke-width="3" rx="8"/>
+  <text x="900" y="50" text-anchor="middle" style="font-family: Arial; font-size: 24px; font-weight: bold; fill: #003d82;">Final ERD - Trail Application System (3NF)</text>
 
-    <div class="container">
-      <div class="column">
-        <h2>UNF</h2>
-        <div class="pk">Trail_ID</div>
-        <div class="attribute">Trail_name</div>
-        <div class="attribute">Difficulty</div>
-        <div class="attribute">Location</div>
-        <div class="attribute">Length</div>
-        <div class="attribute">Elevation_gain</div>
-        <div class="attribute">Route_type</div>
-        <div class="attribute">Estimated_time_min</div>
-        <div class="attribute">Estimated_time_max</div>
-        <div class="attribute">Description_text</div>
-        <div class="attribute">Overall_rating</div>
-        <div class="attribute">Review_count</div>
-        <div class="attribute">Owner_email</div>
-        <div class="attribute">Owner_name</div>
-        <div class="attribute">City</div>
-        <div class="attribute">County</div>
-        <div class="attribute">Country</div>
-        <div class="repeating">(Waypoint_sequence</div>
-        <div class="repeating">Waypoint_latitude</div>
-        <div class="repeating">Waypoint_longitude</div>
-        <div class="repeating">Waypoint_elevation)</div>
-        <div class="repeating">(Feature_name</div>
-        <div class="repeating">Feature_description)</div>
-      </div>
+  <!-- USER Entity (Central) -->
+  <rect x="750" y="120" width="280" height="220" class="entity-box" rx="5"/>
+  <text x="890" y="140" text-anchor="middle" class="entity-name">USER</text>
+  <line x1="760" y1="150" x2="1020" y2="150" stroke="#003d82" stroke-width="1"/>
+  <text x="765" y="170" class="attribute pk">user_id (PK)</text>
+  <text x="765" y="188" class="attribute">email (UNIQUE)</text>
+  <text x="765" y="206" class="attribute">username</text>
+  <text x="765" y="224" class="attribute">full_name</text>
+  <text x="765" y="242" class="attribute">bio</text>
+  <text x="765" y="260" class="attribute">profile_photo_url</text>
+  <text x="765" y="278" class="attribute">registration_date</text>
+  <text x="765" y="296" class="attribute">location</text>
+  <text x="765" y="314" class="attribute">total_activities</text>
+  <text x="765" y="332" class="attribute">role</text>
 
-      <div class="column">
-        <h2>1NF</h2>
-        <div class="pk">Trail_ID</div>
-        <div class="attribute">Trail_name</div>
-        <div class="attribute">Difficulty</div>
-        <div class="attribute">Location</div>
-        <div class="attribute">Length</div>
-        <div class="attribute">Elevation_gain</div>
-        <div class="attribute">Route_type</div>
-        <div class="attribute">Estimated_time_min</div>
-        <div class="attribute">Estimated_time_max</div>
-        <div class="attribute">Description_text</div>
-        <div class="attribute">Overall_rating</div>
-        <div class="attribute">Review_count</div>
-        <div class="attribute">Owner_email</div>
-        <div class="attribute">Owner_name</div>
-        <div class="attribute">City</div>
-        <div class="attribute">County</div>
-        <div class="attribute">Country</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Waypoint_sequence</div>
-        <div class="attribute">Waypoint_latitude</div>
-        <div class="attribute">Waypoint_longitude</div>
-        <div class="attribute">Waypoint_elevation</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Feature_name</div>
-        <div class="attribute">Feature_description</div>
-      </div>
+  <!-- TRAIL Entity (Central) -->
+  <rect x="750" y="420" width="280" height="360" class="entity-box" rx="5"/>
+  <text x="890" y="440" text-anchor="middle" class="entity-name">TRAIL</text>
+  <line x1="760" y1="450" x2="1020" y2="450" stroke="#003d82" stroke-width="1"/>
+  <text x="765" y="470" class="attribute pk">trail_id (PK)</text>
+  <text x="765" y="488" class="attribute">trail_name</text>
+  <text x="765" y="506" class="attribute">difficulty</text>
+  <text x="765" y="524" class="attribute fk">location_id (FK)</text>
+  <text x="765" y="542" class="attribute">length_km</text>
+  <text x="765" y="560" class="attribute">elevation_gain_m</text>
+  <text x="765" y="578" class="attribute fk">route_id (FK)</text>
+  <text x="765" y="596" class="attribute">estimated_time_min</text>
+  <text x="765" y="614" class="attribute">estimated_time_max</text>
+  <text x="765" y="632" class="attribute">description_text</text>
+  <text x="765" y="650" class="attribute">overall_rating</text>
+  <text x="765" y="668" class="attribute">review_count</text>
+  <text x="765" y="686" class="attribute fk">created_by (FK)</text>
+  <text x="765" y="704" class="attribute">created_date</text>
+  <text x="765" y="722" class="attribute">last_updated</text>
+  <text x="765" y="740" class="attribute">is_featured</text>
+  <text x="765" y="758" class="attribute">popularity_score</text>
 
-      <div class="column">
-        <h2>2NF</h2>
-        <div class="pk">Trail_ID</div>
-        <div class="attribute">Trail_name</div>
-        <div class="attribute">Difficulty</div>
-        <div class="fk">Location_ID</div>
-        <div class="attribute">Length</div>
-        <div class="attribute">Elevation_gain</div>
-        <div class="attribute">Route_type</div>
-        <div class="attribute">Estimated_time_min</div>
-        <div class="attribute">Estimated_time_max</div>
-        <div class="attribute">Description_text</div>
-        <div class="attribute">Overall_rating</div>
-        <div class="attribute">Review_count</div>
-        <div class="fk">Owner_email</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Location_ID</div>
-        <div class="attribute">City</div>
-        <div class="attribute">County</div>
-        <div class="attribute">Country</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Owner_email</div>
-        <div class="attribute">Owner_name</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Waypoint_sequence</div>
-        <div class="attribute">Waypoint_latitude</div>
-        <div class="attribute">Waypoint_longitude</div>
-        <div class="attribute">Waypoint_elevation</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Feature_ID</div>
-        <div class="attribute">Feature_name</div>
-        <div class="attribute">Feature_description</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Feature_ID</div>
-      </div>
+  <!-- LOCATION Entity -->
+  <rect x="50" y="450" width="240" height="160" class="entity-box" rx="5"/>
+  <text x="170" y="470" text-anchor="middle" class="entity-name">LOCATION</text>
+  <line x1="60" y1="480" x2="280" y2="480" stroke="#003d82" stroke-width="1"/>
+  <text x="65" y="500" class="attribute pk">location_id (PK)</text>
+  <text x="65" y="518" class="attribute">city</text>
+  <text x="65" y="536" class="attribute">county</text>
+  <text x="65" y="554" class="attribute">country</text>
+  <text x="65" y="572" class="attribute">latitude</text>
+  <text x="65" y="590" class="attribute">longitude</text>
 
-      <div class="column">
-        <h2>3NF</h2>
-        <div class="pk">Trail_ID</div>
-        <div class="attribute">Trail_name</div>
-        <div class="attribute">Difficulty</div>
-        <div class="fk">Location_ID</div>
-        <div class="attribute">Length</div>
-        <div class="attribute">Elevation_gain</div>
-        <div class="fk">Route_ID</div>
-        <div class="attribute">Estimated_time_min</div>
-        <div class="attribute">Estimated_time_max</div>
-        <div class="attribute">Description_text</div>
-        <div class="attribute">Overall_rating</div>
-        <div class="attribute">Review_count</div>
-        <div class="fk">Owner_email</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Location_ID</div>
-        <div class="attribute">City</div>
-        <div class="attribute">County</div>
-        <div class="attribute">Country</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Owner_email</div>
-        <div class="attribute">Owner_name</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Route_ID</div>
-        <div class="attribute">Route_type</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Waypoint_sequence</div>
-        <div class="attribute">Waypoint_latitude</div>
-        <div class="attribute">Waypoint_longitude</div>
-        <div class="attribute">Waypoint_elevation</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="pk">Feature_ID</div>
-        <div class="attribute">Feature_name</div>
-        <div class="attribute">Feature_description</div>
-        <hr style="margin: 20px 0; border: 2px solid #003d82" />
-        <div class="composite-key">Trail_ID</div>
-        <div class="composite-key">Feature_ID</div>
-      </div>
-    </div>
+  <!-- ROUTE_TYPE Entity -->
+  <rect x="50" y="660" width="240" height="100" class="entity-box" rx="5"/>
+  <text x="170" y="680" text-anchor="middle" class="entity-name">ROUTE_TYPE</text>
+  <line x1="60" y1="690" x2="280" y2="690" stroke="#003d82" stroke-width="1"/>
+  <text x="65" y="710" class="attribute pk">route_id (PK)</text>
+  <text x="65" y="728" class="attribute">route_type</text>
+  <text x="65" y="746" class="attribute">route_description</text>
 
-    <div class="relations">
-      <h2>Relation Names (3NF)</h2>
+  <!-- WAYPOINT Entity -->
+  <rect x="400" y="900" width="260" height="160" class="entity-box" rx="5"/>
+  <text x="530" y="920" text-anchor="middle" class="entity-name">WAYPOINT</text>
+  <line x1="410" y1="930" x2="650" y2="930" stroke="#003d82" stroke-width="1"/>
+  <text x="415" y="950" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="415" y="968" class="attribute pk">waypoint_sequence (PK)</text>
+  <text x="415" y="986" class="attribute">waypoint_latitude</text>
+  <text x="415" y="1004" class="attribute">waypoint_longitude</text>
+  <text x="415" y="1022" class="attribute">waypoint_elevation</text>
+  <text x="415" y="1040" class="attribute">waypoint_name</text>
 
-      <div class="relation-box">
-        <div class="relation-name">TRAIL</div>
-        <p><strong>Primary Key:</strong> Trail_ID</p>
-        <p><strong>Foreign Keys:</strong> Location_ID, Owner_email, Route_ID</p>
-        <p>
-          <strong>Attributes:</strong> Trail_name, Difficulty, Length,
-          Elevation_gain, Estimated_time_min, Estimated_time_max,
-          Description_text, Overall_rating, Review_count
-        </p>
-      </div>
+  <!-- POINT_OF_INTEREST Entity -->
+  <rect x="760" y="900" width="260" height="160" class="entity-box" rx="5"/>
+  <text x="890" y="920" text-anchor="middle" class="entity-name">POINT_OF_INTEREST</text>
+  <line x1="770" y1="930" x2="1010" y2="930" stroke="#003d82" stroke-width="1"/>
+  <text x="775" y="950" class="attribute pk">poi_id (PK)</text>
+  <text x="775" y="968" class="attribute fk">trail_id (FK)</text>
+  <text x="775" y="986" class="attribute">poi_name</text>
+  <text x="775" y="1004" class="attribute">poi_description</text>
+  <text x="775" y="1022" class="attribute">poi_latitude</text>
+  <text x="775" y="1040" class="attribute">poi_longitude</text>
 
-      <div class="relation-box">
-        <div class="relation-name">LOCATION</div>
-        <p><strong>Primary Key:</strong> Location_ID</p>
-        <p><strong>Attributes:</strong> City, County, Country</p>
-      </div>
+  <!-- REVIEW Entity -->
+  <rect x="1120" y="900" width="260" height="200" class="entity-box" rx="5"/>
+  <text x="1250" y="920" text-anchor="middle" class="entity-name">REVIEW</text>
+  <line x1="1130" y1="930" x2="1370" y2="930" stroke="#003d82" stroke-width="1"/>
+  <text x="1135" y="950" class="attribute pk">review_id (PK)</text>
+  <text x="1135" y="968" class="attribute fk">trail_id (FK)</text>
+  <text x="1135" y="986" class="attribute fk">user_id (FK)</text>
+  <text x="1135" y="1004" class="attribute">rating</text>
+  <text x="1135" y="1022" class="attribute">review_text</text>
+  <text x="1135" y="1040" class="attribute">review_date</text>
+  <text x="1135" y="1058" class="attribute">helpful_count</text>
+  <text x="1135" y="1076" class="attribute">is_verified</text>
 
-      <div class="relation-box">
-        <div class="relation-name">USER</div>
-        <p><strong>Primary Key:</strong> Owner_email</p>
-        <p><strong>Attributes:</strong> Owner_name</p>
-      </div>
+  <!-- ACTIVITY Entity -->
+  <rect x="1460" y="420" width="280" height="220" class="entity-box" rx="5"/>
+  <text x="1600" y="440" text-anchor="middle" class="entity-name">ACTIVITY</text>
+  <line x1="1470" y1="450" x2="1730" y2="450" stroke="#003d82" stroke-width="1"/>
+  <text x="1475" y="470" class="attribute pk">activity_id (PK)</text>
+  <text x="1475" y="488" class="attribute fk">trail_id (FK)</text>
+  <text x="1475" y="506" class="attribute fk">user_id (FK)</text>
+  <text x="1475" y="524" class="attribute fk">activity_type_id (FK)</text>
+  <text x="1475" y="542" class="attribute">activity_date</text>
+  <text x="1475" y="560" class="attribute">duration_minutes</text>
+  <text x="1475" y="578" class="attribute">distance_km</text>
+  <text x="1475" y="596" class="attribute">moving_time_minutes</text>
+  <text x="1475" y="614" class="attribute">gpx_file_url</text>
 
-      <div class="relation-box">
-        <div class="relation-name">ROUTE_TYPE</div>
-        <p><strong>Primary Key:</strong> Route_ID</p>
-        <p><strong>Attributes:</strong> Route_type</p>
-      </div>
+  <!-- ACTIVITY_TYPE Entity -->
+  <rect x="1460" y="700" width="280" height="120" class="entity-box" rx="5"/>
+  <text x="1600" y="720" text-anchor="middle" class="entity-name">ACTIVITY_TYPE</text>
+  <line x1="1470" y1="730" x2="1730" y2="730" stroke="#003d82" stroke-width="1"/>
+  <text x="1475" y="750" class="attribute pk">activity_type_id (PK)</text>
+  <text x="1475" y="768" class="attribute">activity_name</text>
+  <text x="1475" y="786" class="attribute">activity_icon</text>
 
-      <div class="relation-box">
-        <div class="relation-name">TRAIL_WAYPOINT</div>
-        <p><strong>Primary Key:</strong> (Trail_ID, Waypoint_sequence)</p>
-        <p><strong>Foreign Key:</strong> Trail_ID</p>
-        <p>
-          <strong>Attributes:</strong> Waypoint_latitude, Waypoint_longitude,
-          Waypoint_elevation
-        </p>
-      </div>
+  <!-- PHOTO Entity -->
+  <rect x="1460" y="900" width="280" height="180" class="entity-box" rx="5"/>
+  <text x="1600" y="920" text-anchor="middle" class="entity-name">PHOTO</text>
+  <line x1="1470" y1="930" x2="1730" y2="930" stroke="#003d82" stroke-width="1"/>
+  <text x="1475" y="950" class="attribute pk">photo_id (PK)</text>
+  <text x="1475" y="968" class="attribute fk">trail_id (FK)</text>
+  <text x="1475" y="986" class="attribute fk">user_id (FK)</text>
+  <text x="1475" y="1004" class="attribute">photo_url</text>
+  <text x="1475" y="1022" class="attribute">upload_date</text>
+  <text x="1475" y="1040" class="attribute">caption</text>
+  <text x="1475" y="1058" class="attribute">latitude</text>
+  <text x="1475" y="1076" class="attribute">longitude</text>
 
-      <div class="relation-box">
-        <div class="relation-name">FEATURE</div>
-        <p><strong>Primary Key:</strong> Feature_ID</p>
-        <p><strong>Attributes:</strong> Feature_name, Feature_description</p>
-      </div>
+  <!-- FEATURE Entity -->
+  <rect x="400" y="1140" width="240" height="140" class="entity-box" rx="5"/>
+  <text x="520" y="1160" text-anchor="middle" class="entity-name">FEATURE</text>
+  <line x1="410" y1="1170" x2="630" y2="1170" stroke="#003d82" stroke-width="1"/>
+  <text x="415" y="1190" class="attribute pk">feature_id (PK)</text>
+  <text x="415" y="1208" class="attribute">feature_name</text>
+  <text x="415" y="1226" class="attribute">feature_description</text>
+  <text x="415" y="1244" class="attribute">feature_type</text>
+  <text x="415" y="1262" class="attribute">feature_icon</text>
 
-      <div class="relation-box">
-        <div class="relation-name">TRAIL_FEATURE</div>
-        <p><strong>Primary Key:</strong> (Trail_ID, Feature_ID)</p>
-        <p><strong>Foreign Keys:</strong> Trail_ID, Feature_ID</p>
-      </div>
-    </div>
-  </body>
-</html>
+  <!-- TRAIL_FEATURE Junction -->
+  <rect x="760" y="1140" width="240" height="100" class="entity-box" rx="5"/>
+  <text x="880" y="1160" text-anchor="middle" class="entity-name">TRAIL_FEATURE</text>
+  <line x1="770" y1="1170" x2="990" y2="1170" stroke="#003d82" stroke-width="1"/>
+  <text x="775" y="1190" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="775" y="1208" class="attribute pk">feature_id (PK, FK)</text>
+  <text x="775" y="1226" class="attribute">is_verified</text>
+
+  <!-- TAG Entity -->
+  <rect x="50" y="1140" width="240" height="140" class="entity-box" rx="5"/>
+  <text x="170" y="1160" text-anchor="middle" class="entity-name">TAG</text>
+  <line x1="60" y1="1170" x2="280" y2="1170" stroke="#003d82" stroke-width="1"/>
+  <text x="65" y="1190" class="attribute pk">tag_id (PK)</text>
+  <text x="65" y="1208" class="attribute">tag_name</text>
+  <text x="65" y="1226" class="attribute">tag_category</text>
+  <text x="65" y="1244" class="attribute">tag_description</text>
+  <text x="65" y="1262" class="attribute">tag_icon</text>
+
+  <!-- TRAIL_TAG Junction -->
+  <rect x="50" y="1340" width="240" height="100" class="entity-box" rx="5"/>
+  <text x="170" y="1360" text-anchor="middle" class="entity-name">TRAIL_TAG</text>
+  <line x1="60" y1="1370" x2="280" y2="1370" stroke="#003d82" stroke-width="1"/>
+  <text x="65" y="1390" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="65" y="1408" class="attribute pk">tag_id (PK, FK)</text>
+  <text x="65" y="1426" class="attribute">relevance_score</text>
+
+  <!-- TRAIL_CONDITION Entity -->
+  <rect x="400" y="1340" width="260" height="160" class="entity-box" rx="5"/>
+  <text x="530" y="1360" text-anchor="middle" class="entity-name">TRAIL_CONDITION</text>
+  <line x1="410" y1="1370" x2="650" y2="1370" stroke="#003d82" stroke-width="1"/>
+  <text x="415" y="1390" class="attribute pk">condition_id (PK)</text>
+  <text x="415" y="1408" class="attribute fk">trail_id (FK)</text>
+  <text x="415" y="1426" class="attribute fk">user_id (FK)</text>
+  <text x="415" y="1444" class="attribute">condition_status</text>
+  <text x="415" y="1462" class="attribute">report_date</text>
+  <text x="415" y="1480" class="attribute">condition_notes</text>
+
+  <!-- AMENITY Entity -->
+  <rect x="760" y="1300" width="240" height="140" class="entity-box" rx="5"/>
+  <text x="880" y="1320" text-anchor="middle" class="entity-name">AMENITY</text>
+  <line x1="770" y1="1330" x2="990" y2="1330" stroke="#003d82" stroke-width="1"/>
+  <text x="775" y="1350" class="attribute pk">amenity_id (PK)</text>
+  <text x="775" y="1368" class="attribute">amenity_name</text>
+  <text x="775" y="1386" class="attribute">amenity_type</text>
+  <text x="775" y="1404" class="attribute">amenity_description</text>
+  <text x="775" y="1422" class="attribute">amenity_icon</text>
+
+  <!-- TRAIL_AMENITY Junction -->
+  <rect x="760" y="1500" width="240" height="120" class="entity-box" rx="5"/>
+  <text x="880" y="1520" text-anchor="middle" class="entity-name">TRAIL_AMENITY</text>
+  <line x1="770" y1="1530" x2="990" y2="1530" stroke="#003d82" stroke-width="1"/>
+  <text x="775" y="1550" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="775" y="1568" class="attribute pk">amenity_id (PK, FK)</text>
+  <text x="775" y="1586" class="attribute">is_fee_required</text>
+  <text x="775" y="1604" class="attribute">fee_amount</text>
+
+  <!-- LIST Entity -->
+  <rect x="1120" y="120" width="260" height="160" class="entity-box" rx="5"/>
+  <text x="1250" y="140" text-anchor="middle" class="entity-name">LIST</text>
+  <line x1="1130" y1="150" x2="1370" y2="150" stroke="#003d82" stroke-width="1"/>
+  <text x="1135" y="170" class="attribute pk">list_id (PK)</text>
+  <text x="1135" y="188" class="attribute fk">user_id (FK)</text>
+  <text x="1135" y="206" class="attribute">list_name</text>
+  <text x="1135" y="224" class="attribute">list_description</text>
+  <text x="1135" y="242" class="attribute">is_public</text>
+  <text x="1135" y="260" class="attribute">created_date</text>
+
+  <!-- LIST_TRAIL Junction -->
+  <rect x="1120" y="360" width="260" height="100" class="entity-box" rx="5"/>
+  <text x="1250" y="380" text-anchor="middle" class="entity-name">LIST_TRAIL</text>
+  <line x1="1130" y1="390" x2="1370" y2="390" stroke="#003d82" stroke-width="1"/>
+  <text x="1135" y="410" class="attribute pk">list_id (PK, FK)</text>
+  <text x="1135" y="428" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="1135" y="446" class="attribute">added_date</text>
+
+  <!-- TRAIL_ACTIVITY_TYPE Junction -->
+  <rect x="1120" y="560" width="280" height="100" class="entity-box" rx="5"/>
+  <text x="1260" y="580" text-anchor="middle" class="entity-name">TRAIL_ACTIVITY_TYPE</text>
+  <line x1="1130" y1="590" x2="1390" y2="590" stroke="#003d82" stroke-width="1"/>
+  <text x="1135" y="610" class="attribute pk">trail_id (PK, FK)</text>
+  <text x="1135" y="628" class="attribute pk">activity_type_id (PK, FK)</text>
+  <text x="1135" y="646" class="attribute">is_primary_activity</text>
+
+  <!-- Relationships -->
+
+  <!-- USER to TRAIL (creates) -->
+  <path d="M 890 340 L 890 420" class="relationship-line"/>
+  <text x="875" y="360" class="cardinality">1</text>
+  <text x="875" y="410" class="cardinality">M</text>
+  <text x="900 370" class="relationship-label">creates</text>
+  <circle cx="890" cy="340" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 890 420 L 885 410 M 890 420 L 895 410" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to LOCATION -->
+  <path d="M 290 530 L 750 540" class="relationship-line"/>
+  <text x="300" y="525" class="cardinality">1</text>
+  <text x="730" y="535" class="cardinality">M</text>
+  <text x="480" y="530" class="relationship-label">is located at</text>
+  <circle cx="290" cy="530" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 750 540 L 740 535 M 750 540 L 740 545" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to ROUTE_TYPE -->
+  <path d="M 290 710 L 750 590" class="relationship-line"/>
+  <text x="300" y="705" class="cardinality">1</text>
+  <text x="730" y="595" class="cardinality">M</text>
+  <text x="480" y="640" class="relationship-label">has route type</text>
+  <circle cx="290" cy="710" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 750 590 L 740 590 M 750 590 L 745 580" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to WAYPOINT -->
+  <path d="M 750 780 L 660 900" class="relationship-line"/>
+  <text x="735" y="785" class="cardinality">1</text>
+  <text x="665" y="890" class="cardinality">M</text>
+  <text x="685" y="835" class="relationship-label">contains</text>
+  <circle cx="750" cy="780" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 660 900 L 665 890 M 660 900 L 655 895" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to POINT_OF_INTEREST -->
+  <path d="M 890 780 L 890 900" class="relationship-line"/>
+  <text x="875" y="795" class="cardinality">1</text>
+  <text x="875" y="890" class="cardinality">M</text>
+  <text x="900" y="835" class="relationship-label">has POI</text>
+  <circle cx="890" cy="780" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 890 900 L 885 890 M 890 900 L 895 890" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to REVIEW -->
+  <path d="M 1030 700 L 1250 900" class="relationship-line"/>
+  <text x="1045" y="720" class="cardinality">1</text>
+  <text x="1230" y="895" class="cardinality">M</text>
+  <text x="1120" y="790" class="relationship-label">receives</text>
+  <circle cx="1030" cy="700" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1250 900 L 1245 890 M 1250 900 L 1240 895" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- USER to REVIEW -->
+  <path d="M 1030 280 L 1250 900" class="relationship-line"/>
+  <text x="1045" y="290" class="cardinality">1</text>
+  <text x="1230" y="885" class="cardinality">M</text>
+  <text x="1120" y="575" class="relationship-label">writes</text>
+  <circle cx="1030" cy="280" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1250 900 L 1240 895 M 1250 900 L 1245 890" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to ACTIVITY -->
+  <path d="M 1030 530 L 1460 530" class="relationship-line"/>
+  <text x="1045" y="525" class="cardinality">1</text>
+  <text x="1440" y="525" class="cardinality">M</text>
+  <text x="1220" y="525" class="relationship-label">tracked on</text>
+  <circle cx="1030" cy="530" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1460 530 L 1450 525 M 1460 530 L 1450 535" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- USER to ACTIVITY -->
+  <path d="M 1030 230 L 1460 510" class="relationship-line"/>
+  <text x="1045" y="240" class="cardinality">1</text>
+  <text x="1440" y="505" class="cardinality">M</text>
+  <text x="1220" y="350" class="relationship-label">completes</text>
+  <circle cx="1030" cy="230" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1460 510 L 1450 510 M 1460 510 L 1455 500" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- ACTIVITY to ACTIVITY_TYPE -->
+  <path d="M 1600 640 L 1600 700" class="relationship-line"/>
+  <text x="1585" y="655" class="cardinality">M</text>
+  <text x="1585" y="690" class="cardinality">1</text>
+  <text x="1610" y="670" class="relationship-label">is type</text>
+  <path d="M 1600 640 L 1595 650 M 1600 640 L 1605 650" stroke="#003d82" stroke-width="1.5"/>
+  <circle cx="1600" cy="700" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+
+  <!-- TRAIL to PHOTO -->
+  <path d="M 1030 750 L 1460 990" class="relationship-line"/>
+  <text x="1045" y="760" class="cardinality">1</text>
+  <text x="1440" y="985" class="cardinality">M</text>
+  <text x="1220" y="860" class="relationship-label">has photos</text>
+  <circle cx="1030" cy="750" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1460 990 L 1450 990 M 1460 990 L 1455 980" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- USER to PHOTO -->
+  <path d="M 1030 310 L 1460 1000" class="relationship-line"/>
+  <text x="1045" y="320" class="cardinality">1</text>
+  <text x="1440" y="995" class="cardinality">M</text>
+  <text x="1220" y="640" class="relationship-label">uploads</text>
+  <circle cx="1030" cy="310" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1460 1000 L 1450 995 M 1460 1000 L 1455 990" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to TRAIL_FEATURE -->
+  <path d="M 880 780 L 880 1140" class="relationship-line"/>
+  <text x="865" y="800" class="cardinality">1</text>
+  <text x="865" y="1130" class="cardinality">M</text>
+  <circle cx="880" cy="780" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 880 1140 L 875 1130 M 880 1140 L 885 1130" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- FEATURE to TRAIL_FEATURE -->
+  <path d="M 640 1190 L 760 1190" class="relationship-line"/>
+  <text x="650" y="1185" class="cardinality">1</text>
+  <text x="740" y="1185" class="cardinality">M</text>
+  <circle cx="640" cy="1190" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 760 1190 L 750 1185 M 760 1190 L 750 1195" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TAG to TRAIL_TAG -->
+  <path d="M 170 1280 L 170 1340" class="relationship-line"/>
+  <text x="155" y="1300" class="cardinality">1</text>
+  <text x="155" y="1330" class="cardinality">M</text>
+  <circle cx="170" cy="1280" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 170 1340 L 165 1330 M 170 1340 L 175 1330" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to TRAIL_TAG -->
+  <path d="M 750 700 L 290 1390" class="relationship-line"/>
+  <text x="735" y="710" class="cardinality">1</text>
+  <text x="300" y="1385" class="cardinality">M</text>
+  <circle cx="750" cy="700" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 290 1390 L 300 1385 M 290 1390 L 295 1400" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to TRAIL_CONDITION -->
+  <path d="M 750 730 L 660 1340" class="relationship-line"/>
+  <text x="735" y="740" class="cardinality">1</text>
+  <text x="665" y="1330" class="cardinality">M</text>
+  <circle cx="750" cy="730" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 660 1340 L 665 1330 M 660 1340 L 655 1335" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- USER to TRAIL_CONDITION -->
+  <path d="M 750 300 L 530 1340" class="relationship-line"/>
+  <text x="735" y="310" class="cardinality">1</text>
+  <text x="535" y="1330" class="cardinality">M</text>
+  <text x="620" y="800" class="relationship-label">reports</text>
+  <circle cx="750" cy="300" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 530 1340 L 535 1330 M 530 1340 L 525 1335" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- AMENITY to TRAIL_AMENITY -->
+  <path d="M 880 1440 L 880 1500" class="relationship-line"/>
+  <text x="865" y="1460" class="cardinality">1</text>
+  <text x="865" y="1490" class="cardinality">M</text>
+  <circle cx="880" cy="1440" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 880 1500 L 875 1490 M 880 1500 L 885 1490" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to TRAIL_AMENITY -->
+  <path d="M 880 780 L 880 1500" class="relationship-line"/>
+  <text x="865" y="800" class="cardinality">1</text>
+  <text x="865" y="1485" class="cardinality">M</text>
+  <circle cx="880" cy="780" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 880 1500 L 875 1490 M 880 1500 L 885 1490" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- USER to LIST -->
+  <path d="M 1030 200 L 1120 200" class="relationship-line"/>
+  <text x="1045" y="195" class="cardinality">1</text>
+  <text x="1100" y="195" class="cardinality">M</text>
+  <text x="1060" y="195" class="relationship-label">creates</text>
+  <circle cx="1030" cy="200" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1120 200 L 1110 195 M 1120 200 L 1110 205" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- LIST to LIST_TRAIL -->
+  <path d="M 1250 280 L 1250 360" class="relationship-line"/>
+  <text x="1235" y="300" class="cardinality">1</text>
+  <text x="1235" y="350" class="cardinality">M</text>
+  <circle cx="1250" cy="280" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1250 360 L 1245 350 M 1250 360 L 1255 350" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to LIST_TRAIL -->
+  <path d="M 1030 460 L 1120 410" class="relationship-line"/>
+  <text x="1045" y="455" class="cardinality">1</text>
+  <text x="1100" y="415" class="cardinality">M</text>
+  <circle cx="1030" cy="460" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1120 410 L 1110 410 M 1120 410 L 1115 400" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- TRAIL to TRAIL_ACTIVITY_TYPE -->
+  <path d="M 1030 610 L 1120 610" class="relationship-line"/>
+  <text x="1045" y="605" class="cardinality">1</text>
+  <text x="1100" y="605" class="cardinality">M</text>
+  <circle cx="1030" cy="610" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1120 610 L 1110 605 M 1120 610 L 1110 615" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- ACTIVITY_TYPE to TRAIL_ACTIVITY_TYPE -->
+  <path d="M 1460 760 L 1390 628" class="relationship-line"/>
+  <text x="1440" y="755" class="cardinality">1</text>
+  <text x="1395" y="635" class="cardinality">M</text>
+  <circle cx="1460" cy="760" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+  <path d="M 1390 628 L 1400 630 M 1390 628 L 1395 638" stroke="#003d82" stroke-width="1.5"/>
+
+  <!-- Legend -->
+  <rect x="50" y="1700" width="900" height="300" fill="#f9f9f9" stroke="#003d82" stroke-width="3" rx="8"/>
+  <text x="500" y="1735" text-anchor="middle" style="font-family: Arial; font-size: 18px; font-weight: bold; fill: #003d82;">Legend & Notation</text>
+  
+  <text x="70" y="1770" style="font-family: Arial; font-size: 12px; font-weight: bold; fill: #333; text-decoration: underline;">Underlined</text>
+  <text x="165" y="1770" style="font-family: Arial; font-size: 12px; fill: #333;"> = Primary Key (PK)</text>
+  
+  <text x="70" y="1795" style="font-family: Arial; font-size: 12px; font-style: italic; fill: #333;">Italicized</text>
+  <text x="150" y="1795" style="font-family: Arial; font-size: 12px; fill: #333;"> = Foreign Key (FK)</text>
+
+  <g transform="translate(70, 1810)">
+    <circle cx="0" cy="0" r="3" fill="white" stroke="#003d82" stroke-width="2"/>
+    <text x="15" y="5" style="font-family: Arial; font-size: 12px; fill: #333;"> = Optional (O) participation (hollow circle)</text>
+  </g>
+
+  <g transform="translate(70, 1840)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#003d82" stroke-width="2"/>
+    <path d="M 40 0 L 30 -5 M 40 0 L 30 5" stroke="#003d82" stroke-width="2" fill="none"/>
+    <text x="55" y="5" style="font-family: Arial; font-size: 12px; fill: #333;"> = Mandatory (M) participation (crow's foot)</text>
+  </g>
+
+  <text x="70" y="1875" style="font-family: Arial; font-size: 12px; fill: #333;">1 = One (exactly one)</text>
+  <text x="70" y="1900" style="font-family: Arial; font-size: 12px; fill: #333;">M = Many (zero or more)</text>
+
+  <text x="70" y="1935" style="font-family: Arial; font-size: 12px; font-weight: bold; fill: #003d82;">Cardinality Notation:</text>
+  <text x="70" y="1960" style="font-family: Arial; font-size: 11px; fill: #333;">• 1:M relationships shown with "1" at parent, "M" at child</text>
+  <text x="70" y="1980" style="font-family: Arial; font-size: 11px; fill: #333;">• Junction tables resolve M:M relationships with composite PKs</text>

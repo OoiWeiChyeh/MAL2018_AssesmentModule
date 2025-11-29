@@ -467,7 +467,8 @@ GO
 -- Before DELETE: View trail to be deleted
 SELECT trail_id, trail_name, difficulty
 FROM CW1.TRAIL
-WHERE trail_id = 6;
+--Comment out below line to show all data clearly before DELETE
+--WHERE trail_id = 6
 GO
 
 -- Execute DELETE procedure
@@ -477,5 +478,6 @@ GO
 -- After DELETE: Verify trail no longer exists
 SELECT trail_id, trail_name, difficulty
 FROM CW1.TRAIL
-WHERE trail_id = 6;
+--Comment out to display whole data for better comparison rather than just zero rows.
+--WHERE trail_id = 6;
 GO
