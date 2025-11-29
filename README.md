@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-This project implements a normalized relational database system for a Trail Application, similar to AllTrails. The system supports trail management, user authentication, feature tracking, and comprehensive audit logging. The database is designed following Third Normal Form (3NF) principles and implements complete CRUD operations through stored procedures.
+This project implements a normalized relational database system for a Trail Application, similar to AllTrails. The system supports trail management, feature tracking with comprehensive audit logging. The database is designed following Third Normal Form (3NF) principles and implements complete CRUD operations through stored procedures.
 
 ## Database Architecture
 
