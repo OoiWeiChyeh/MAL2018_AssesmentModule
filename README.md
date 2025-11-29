@@ -38,7 +38,7 @@ TRAIL (1) ----< (M) TRAIL_LOG (via trigger)
 ## File Structure
 
 ```
-COMP2001-Trail-Database/
+MAL2018_AssessmentModule/CW1
 │
 ├── Exercise_4.sql              # Table creation and data population
 ├── Exercise_5.sql              # View implementation
