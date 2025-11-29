@@ -40,11 +40,12 @@ TRAIL (1) ----< (M) TRAIL_LOG (via trigger)
 ```
 MAL2018_AssessmentModule/CW1
 │
-├── Exercise_4.sql              # Table creation and data population
-├── Exercise_5.sql              # View implementation
-├── Exercise_6.sql              # Stored procedures (CRUD operations)
-├── Exercise_7.sql              # Trigger implementation
-├── README.md                   # This file
+├── MAL2018_Information Management&Retrieval_CW1_OoiWeiChyeh.pdf            # Main Report
+├── Exercise_4.sql                                                          # Table creation and data population
+├── Exercise_5.sql                                                          # View implementation
+├── Exercise_6.sql                                                          # Stored procedures (CRUD operations)
+├── Exercise_7.sql                                                          # Trigger implementation
+├── README.md                                                               # This file
 │
 └── Documentation/
     ├── ERD_Diagram.pdf
