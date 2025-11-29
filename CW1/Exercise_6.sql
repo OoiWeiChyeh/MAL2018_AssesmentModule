@@ -1,11 +1,9 @@
 /*
 ***************************************************************************************************
 * EXERCISE 6: STORED PROCEDURES - CRUD OPERATIONS
-* Module: COMP2001 - Database Systems
+* Module: MAL2018 – Information Management & Retrieval
 * Purpose: Implement complete CRUD functionality for TRAIL table
 * Database: Azure SQL Edge (Docker)
-* Server: dist-6-505.uopnet.plymouth.ac.uk
-* Schema: CW1
 ***************************************************************************************************
 *
 * STORED PROCEDURES IMPLEMENTED:

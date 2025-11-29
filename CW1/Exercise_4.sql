@@ -1,11 +1,9 @@
 /*
 ***************************************************************************************************
 * EXERCISE 4: SQL TABLE CREATION AND DATA POPULATION
-* Module: COMP2001 - Database Systems
+* Module: MAL2018 – Information Management & Retrieval
 * Purpose: Create normalized database tables for Trail Application
 * Database: Azure SQL Edge (Docker)
-* Server: dist-6-505.uopnet.plymouth.ac.uk
-* Schema: CW1
 ***************************************************************************************************
 * 
 * TABLES SELECTED FOR IMPLEMENTATION:

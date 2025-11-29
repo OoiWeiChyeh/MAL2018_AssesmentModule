@@ -1,11 +1,9 @@
 /*
 ***************************************************************************************************
 * EXERCISE 5: VIEW IMPLEMENTATION
-* Module: COMP2001 - Database Systems
+* Module: MAL2018 – Information Management & Retrieval
 * Purpose: Create queryable view combining TRAIL and USER tables for trails webpage
 * Database: Azure SQL Edge (Docker)
-* Server: dist-6-505.uopnet.plymouth.ac.uk
-* Schema: CW1
 ***************************************************************************************************
 *
 * VIEW PURPOSE:

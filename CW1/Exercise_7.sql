@@ -1,11 +1,9 @@
 /*
 ***************************************************************************************************
 * EXERCISE 7: TRIGGER IMPLEMENTATION
-* Module: COMP2001 - Database Systems
+* Module: MAL2018 – Information Management & Retrieval
 * Purpose: Automatically log trail additions for audit compliance
 * Database: Azure SQL Edge (Docker)
-* Server: dist-6-505.uopnet.plymouth.ac.uk
-* Schema: CW1
 ***************************************************************************************************
 *
 * TRIGGER PURPOSE:
