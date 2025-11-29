@@ -1,13 +1,11 @@
 # Trail Application Database System
 
 ## Module Information
-- **Module Code:** COMP2001
-- **Module Name:** Database Systems
-- **Assignment:** Coursework 1 - Database Design and Implementation
-- **Academic Year:** 2024/2025
+- **Module Code:** MAL2018
+- **Module Name:** Information Management & Retrieval
+- **Assessment:** Coursework 1
+- **Academic Year:** 2025
 - **Database Platform:** Azure SQL Edge (Docker)
-- **Server:** dist-6-505.uopnet.plymouth.ac.uk
-- **Schema:** CW1
 
 ## Project Overview
 
@@ -49,7 +47,6 @@ COMP2001-Trail-Database/
 ├── README.md                   # This file
 │
 └── Documentation/
-    ├── Field_Definition_Grids.pdf
     ├── ERD_Diagram.pdf
     └── Screenshots/
         ├── Exercise_4/         # Table verification screenshots
@@ -110,247 +107,6 @@ Schema: CW1
 Authentication: SQL Server Authentication
 ```
 
-## Database Objects
-
-### Tables
-
-#### USER Table
-Stores user authentication and authorization information.
-
-**Columns:**
-- `user_id` (PK, IDENTITY) - Unique user identifier
-- `email` (UNIQUE, NOT NULL) - User email address
-- `username` (NOT NULL) - Display name
-- `full_name` (NULL) - Full legal name
-- `role` (NOT NULL, DEFAULT 'user') - Role-based access control
-- `registration_date` (NOT NULL, DEFAULT GETDATE()) - Account creation timestamp
-
-**Constraints:**
-- `PK_User` - Primary key on user_id
-- `UQ_User_Email` - Unique constraint on email
-- `CK_User_Role` - CHECK constraint (role IN ('admin', 'user'))
-
-**Demo Data:**
-```sql
-grace@plymouth.ac.uk  | GraceH | Grace Hopper      | user
-tim@plymouth.ac.uk    | TimBL  | Tim Berners-Lee   | admin
-ada@plymouth.ac.uk    | AdaL   | Ada Lovelace      | user
-```
-
-#### TRAIL Table
-Stores comprehensive trail information.
-
-**Columns:**
-- `trail_id` (PK, IDENTITY) - Unique trail identifier
-- `trail_name` (NOT NULL) - Trail name
-- `difficulty` (NOT NULL) - Easy, Moderate, or Hard
-- `location` (NOT NULL) - Human-readable location
-- `length_km` (NOT NULL) - Trail length in kilometers
-- `elevation_gain_m` (NULL) - Elevation gain in meters
-- `route_type` (NOT NULL) - Loop, Out & back, or Point to point
-- `description_text` (NULL) - Detailed description
-- `overall_rating` (NULL) - Average rating (1.00-5.00)
-- `created_by` (FK, NOT NULL) - References USER(user_id)
-- `created_date` (NOT NULL, DEFAULT GETDATE()) - Creation timestamp
-
-**Constraints:**
-- `PK_Trail` - Primary key on trail_id
-- `FK_Trail_User` - Foreign key to USER (ON DELETE NO ACTION, ON UPDATE CASCADE)
-- `CK_Trail_Difficulty` - CHECK constraint (difficulty IN ('Easy', 'Moderate', 'Hard'))
-- `CK_Trail_Length` - CHECK constraint (length_km > 0)
-- `CK_Trail_Elevation` - CHECK constraint (elevation_gain_m >= 0)
-- `CK_Trail_RouteType` - CHECK constraint (route_type IN ('Loop', 'Out & back', 'Point to point'))
-- `CK_Trail_Rating` - CHECK constraint (overall_rating BETWEEN 1.00 AND 5.00)
-
-**Demo Data:**
-```
-Plymbridge Circular            | Easy     | 5.2 km  | Loop
-Dartmoor Summit Trail          | Hard     | 12.8 km | Loop
-South West Coast Path Section  | Moderate | 8.5 km  | Point to point
-Burrator Reservoir Walk        | Easy     | 6.0 km  | Loop
-Buckland Beacon Ascent         | Moderate | 4.5 km  | Out & back
-```
-
-#### TRAIL_FEATURE Table (Link Entity)
-Resolves many-to-many relationship between trails and features.
-
-**Columns:**
-- `trail_id` (PK, FK) - References TRAIL(trail_id)
-- `feature_name` (PK) - Feature name (e.g., 'River', 'Waterfall')
-- `feature_description` (NULL) - Optional description
-
-**Constraints:**
-- `PK_TrailFeature` - Composite primary key (trail_id, feature_name)
-- `FK_TrailFeature_Trail` - Foreign key to TRAIL (ON DELETE CASCADE, ON UPDATE CASCADE)
-
-**Demo Data:**
-```
-Trail 1: River, Historical Site, Forest
-Trail 2: Mountain Views, Wildlife
-Trail 3: Ocean Views, Beach Access
-Trail 4: Lake, Picnic Area
-Trail 5: Historical Site, Summit
-```
-
-#### TRAIL_LOG Table (Audit Table)
-Automatically populated by trigger for audit compliance.
-
-**Columns:**
-- `log_id` (PK, IDENTITY) - Unique log entry identifier
-- `trail_id` (NOT NULL) - Trail that was added
-- `trail_name` (NOT NULL) - Trail name (denormalized)
-- `added_by` (NOT NULL) - User who added the trail
-- `added_by_email` (NOT NULL) - User email (denormalized)
-- `timestamp` (NOT NULL, DEFAULT GETDATE()) - Log timestamp
-
-**Constraints:**
-- `PK_TrailLog` - Primary key on log_id
-
-### View
-
-#### vw_TrailsWithCreator
-Combines TRAIL and USER tables for trails webpage display.
-
-**Purpose:**
-- Simplify frontend queries by encapsulating JOIN logic
-- Provide single access point for trail and creator data
-- Calculate derived fields automatically
-
-**Columns:**
-- All TRAIL columns
-- `creator_id` - User ID of trail creator
-- `creator_username` - Creator's username
-- `creator_email` - Creator's email
-- `creator_role` - Creator's role
-- `days_since_created` - Calculated field (DATEDIFF from created_date)
-
-**Usage:**
-```sql
--- Get all trails with creator info
-SELECT * FROM CW1.vw_TrailsWithCreator;
-
--- Filter by difficulty
-SELECT * FROM CW1.vw_TrailsWithCreator WHERE difficulty = 'Easy';
-
--- Filter by creator
-SELECT * FROM CW1.vw_TrailsWithCreator WHERE creator_username = 'TimBL';
-```
-
-### Stored Procedures
-
-#### sp_InsertTrail
-Inserts new trail with comprehensive validation.
-
-**Parameters:**
-- `@trail_name` (required) - Trail name
-- `@difficulty` (required) - Easy, Moderate, or Hard
-- `@location` (required) - Location description
-- `@length_km` (required) - Trail length
-- `@route_type` (required) - Loop, Out & back, or Point to point
-- `@created_by` (required) - User ID of creator
-- `@elevation_gain_m` (optional) - Elevation gain
-- `@description_text` (optional) - Trail description
-- `@overall_rating` (optional) - Initial rating
-- `@new_trail_id` (OUTPUT) - Returns new trail_id
-
-**Validation:**
-- Verifies creator exists in USER table
-- Validates difficulty value
-- Validates route type
-- Validates rating range
-
-**Usage:**
-```sql
-DECLARE @new_id INT;
-EXEC CW1.sp_InsertTrail 
-    @trail_name = 'New Trail',
-    @difficulty = 'Moderate',
-    @location = 'Devon, England',
-    @length_km = 5.0,
-    @route_type = 'Loop',
-    @created_by = 1,
-    @new_trail_id = @new_id OUTPUT;
-SELECT @new_id AS NewTrailID;
-```
-
-#### sp_ReadTrail
-Retrieves trail(s) by ID or returns all trails.
-
-**Parameters:**
-- `@trail_id` (optional, NULL = all trails) - Specific trail ID
-
-**Usage:**
-```sql
--- Get specific trail
-EXEC CW1.sp_ReadTrail @trail_id = 1;
-
--- Get all trails
-EXEC CW1.sp_ReadTrail;
-```
-
-#### sp_UpdateTrail
-Updates existing trail with partial field support.
-
-**Parameters:**
-- `@trail_id` (required) - Trail to update
-- All other trail fields (optional, NULL = no update)
-
-**Design:**
-- Uses ISNULL to preserve unchanged fields
-- Validates constraint values
-- Supports partial updates
-
-**Usage:**
-```sql
--- Update only name and difficulty
-EXEC CW1.sp_UpdateTrail
-    @trail_id = 1,
-    @trail_name = 'Updated Trail Name',
-    @difficulty = 'Hard';
-```
-
-#### sp_DeleteTrail
-Deletes trail and cascades to related features.
-
-**Parameters:**
-- `@trail_id` (required) - Trail to delete
-
-**Cascade:**
-- Automatically removes related TRAIL_FEATURE records (ON DELETE CASCADE)
-
-**Usage:**
-```sql
-EXEC CW1.sp_DeleteTrail @trail_id = 1;
-```
-
-### Trigger
-
-#### trg_Trail_Insert_Log
-Automatically logs trail additions for audit compliance.
-
-**Type:** AFTER INSERT trigger on TRAIL table
-
-**Functionality:**
-- Fires after successful trail insertion
-- Captures trail_id, trail_name, creator user_id, and email
-- Inserts audit record into TRAIL_LOG
-- Operates within same transaction as parent INSERT
-
-**Mechanism:**
-- Uses INSERTED pseudo-table to access new row data
-- Joins with USER table to retrieve email
-- Denormalizes data for immutable audit trail
-
-**Testing:**
-```sql
--- Insert trail (trigger fires automatically)
-INSERT INTO CW1.TRAIL (trail_name, difficulty, location, length_km, route_type, created_by)
-VALUES ('Test Trail', 'Easy', 'Test Location', 3.0, 'Loop', 1);
-
--- Verify log entry created
-SELECT * FROM CW1.TRAIL_LOG ORDER BY log_id DESC;
-```
-
 ## Testing and Verification
 
 ### Unit Tests
@@ -380,32 +136,6 @@ Each SQL file includes comprehensive testing sections:
 -- Run all test queries from Exercise_6.sql (Section 6)
 -- Run all test queries from Exercise_7.sql (Section 4)
 ```
-
-## Code Quality
-
-### Functionality
-- Meets all assignment requirements
-- Handles edge cases (invalid FKs, constraint violations)
-- Comprehensive error handling with TRY-CATCH blocks
-- No undefined behavior or crashes
-
-### Efficiency
-- Strategic indexes on foreign keys and filtered columns
-- No unnecessary repetition or complexity
-- Efficient query patterns with appropriate JOINs
-- Optimized for performance and resource use
-
-### Readability
-- Logical structure with clear section headers
-- Standard SQL formatting with consistent indentation
-- Descriptive naming conventions (snake_case)
-- Clear separation of concerns
-
-### Documentation
-- Comprehensive inline comments on every section
-- Purpose, rationale, and design decisions documented
-- Complex logic explained in detail
-- Anyone unfamiliar with code can understand approach
 
 ## Key Design Decisions
 
@@ -573,6 +303,3 @@ For academic inquiries related to this project, please contact through the unive
 ---
 
 **Last Updated:** November 2025  
-**Version:** 1.0  
-**Database Schema:** CW1  
-**SQL Server Version:** Azure SQL Edge (Latest)
