@@ -25,7 +25,10 @@ The Trail Application aims to allow users to explore outdoor trails, similar to 
 
 # Author
 BSCS2509254
+
 University of Plymouth
+
 Module: MAL2018 — Information Management & Retrieval
+
 Academic Year: 2025
 
