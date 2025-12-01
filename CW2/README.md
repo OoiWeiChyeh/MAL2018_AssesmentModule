@@ -3,7 +3,7 @@
 ## Module Information
 - **Module Code:** MAL2018
 - **Module Name:** Information Management & Retrieval
-- **Assessment:** Coursework 1
+- **Assessment:** Coursework 2
 - **Academic Year:** 2025
 
 
@@ -27,4 +27,4 @@ For academic inquiries related to this project, please contact through the unive
 
 ---
 
-**Last Updated:** November 2025  
+**Last Updated:** December 2025  
