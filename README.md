@@ -8,7 +8,7 @@ This repository contains my full implementation of the Coursework 1 and Coursewo
 
 ---
 
-# 📌 Coursework Summary (Dashboard)
+# Coursework Summary (Dashboard)
 
 | Component                  | Focus                                                                  | Technologies                                         |
 | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------- | 
@@ -17,7 +17,7 @@ This repository contains my full implementation of the Coursework 1 and Coursewo
 
 ---
 
-# 🧩 Project Overview
+# Project Overview
 
 The Trail Application aims to allow users to explore outdoor trails, similar to platforms like AllTrails.
 
