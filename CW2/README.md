@@ -17,8 +17,11 @@ Academic project - University of Plymouth. All rights reserved.
 
 ## Author
 BSCS2509254
+
 University of Plymouth 
+
 Module: MAL2018 - Information Management & Retrieval
+
 Academic Year: 2025
 
 ## Contact
