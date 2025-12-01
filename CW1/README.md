@@ -119,16 +119,6 @@ Each SQL file includes comprehensive testing sections:
 **Exercise 6:** Before/after testing for all CRUD operations
 **Exercise 7:** Trigger firing verification with correlation checks
 
-### Test Coverage
-
-- Table creation and constraints: 100%
-- Foreign key relationships: 100%
-- CHECK constraints: 100%
-- View functionality: 100%
-- Stored procedure CRUD: 100%
-- Trigger functionality: 100%
-- Error handling: 100%
-
 ### Running Tests
 
 ```sql
