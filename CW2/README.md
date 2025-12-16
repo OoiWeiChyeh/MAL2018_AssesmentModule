@@ -47,15 +47,17 @@ The implementation uses the CW1 schema under the `CW1` namespace in the `COMP200
 
 ```
 .
-├── app.py                  # Application entry point and server initialization
-├── config.py               # Configuration: database connection, SQLAlchemy, Marshmallow
-├── models.py               # ORM models and Marshmallow schemas
-├── swagger.yml             # OpenAPI 3.0 specification
-├── trails.py               # Trail CRUD endpoint controllers
-├── users.py                # User read-only endpoint controllers
-├── features.py             # Trail feature relationship controllers
-├── views.py                # Database view access controllers
-├── requirements.txt        # Python package dependencies
+├──Diagram_CW2                                           # Diagram & Test Cases
+├──MAL2018_SwaggerUI_Implementation_CW2                   # Swagger Documentation
+  ├── app.py                  # Application entry point and server initialization
+  ├── config.py               # Configuration: database connection, SQLAlchemy, Marshmallow
+  ├── models.py               # ORM models and Marshmallow schemas
+  ├── swagger.yml             # OpenAPI 3.0 specification
+  ├── trails.py               # Trail CRUD endpoint controllers
+  ├── users.py                # User read-only endpoint controllers
+  ├── features.py             # Trail feature relationship controllers
+  ├── views.py                # Database view access controllers
+  ├── requirements.txt        # Python package dependencies
 └── README.md              # Project documentation
 ```
 
