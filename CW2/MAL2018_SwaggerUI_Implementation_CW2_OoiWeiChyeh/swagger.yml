@@ -1,0 +1,585 @@
+# swagger.yml
+# OpenAPI 3.0 specification for CW1 Trail REST API
+#
+# This file defines the complete API contract including:
+# - Available endpoints and HTTP methods
+# - Request/response schemas
+# - Data validation rules
+# - Error responses
+# - Documentation for interactive Swagger UI
+#
+# Connexion automatically:
+# - Routes requests to Python controller functions
+# - Validates request data against schemas
+# - Generates interactive API documentation
+# - Provides request/response serialization
+#
+# Author: BSCS2509254
+# Module: MAL2018 - Information Management & Retrieval
+# Date: November 2025
+
+openapi: 3.0.0
+
+# ==============================================================================
+# API METADATA
+# ==============================================================================
+info:
+  title: CW2 Trail REST API
+  description: |
+    RESTful API for the TrailService microservice.
+
+    This API provides complete CRUD operations for managing hiking trails,
+    read-only access to user information and trail feature management.
+
+    ## Features
+    - Complete trail catalog management
+    - User and creator information lookup
+    - Trail feature association (M:N relationship)
+    - Database view access for optimized queries
+    - Comprehensive data validation
+
+    ## Database Schema
+    The API interacts with the CW1 schema containing:
+    - USER: System users and trail creators
+    - TRAIL: Hiking trail records
+    - TRAIL_FEATURE: Junction table for trail features
+    - vw_TrailsWithCreator: View combining trail and user data
+
+  version: 1.0.0
+  contact:
+    name: BSCS2509254
+    email: BSCS2509254@plymouth.ac.uk
+
+# Base path for all API endpoints
+servers:
+  - url: /api
+    description: API base path
+
+# ==============================================================================
+# API ENDPOINTS
+# ==============================================================================
+paths:
+  # ----------------------------------------------------------------------------
+  # TRAIL ENDPOINTS
+  # ----------------------------------------------------------------------------
+
+  /trails:
+    # GET /api/trails - List all trails
+    get:
+      tags:
+        - Trails
+      summary: Retrieve all trails
+      description: |
+        Returns a complete list of all trails in the system,
+        ordered by creation date (most recent first).
+
+        Each trail includes:
+        - Basic trail information (name, difficulty, location)
+        - Physical characteristics (length, elevation)
+        - Ratings and descriptions
+        - Nested creator information
+        - Associated features
+      operationId: trails.read_all
+      responses:
+        "200":
+          description: List of trails retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trail"
+        "500":
+          description: Internal server error
+
+    # POST /api/trails - Create new trail
+    post:
+      tags:
+        - Trails
+      summary: Create a new trail
+      description: |
+        Creates a new trail record in the database.
+
+        Requirements:
+        - All required fields must be provided
+        - Email must match an existing user
+        - Difficulty must be: Easy, Moderate, or Hard
+        - Route type must be: Loop, Out & back, or Point to point
+        - Length must be positive number
+      operationId: trails.create
+      requestBody:
+        required: true
+        description: Trail data for creation
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrailCreate"
+      responses:
+        "201":
+          description: Trail created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trail"
+        "400":
+          description: Invalid input data (validation failed)
+        "404":
+          description: User email not found
+
+  /trails/{trail_id}:
+    # GET /api/trails/{trail_id} - Get specific trail
+    get:
+      tags:
+        - Trails
+      summary: Retrieve a specific trail by ID
+      description: |
+        Returns complete information for a single trail including
+        creator details and all associated features.
+      operationId: trails.read_one
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          description: Unique identifier of the trail
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Trail found and returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trail"
+        "404":
+          description: Trail not found
+
+    # PATCH /api/trails/{trail_id} - Update trail
+    patch:
+      tags:
+        - Trails
+      summary: Update an existing trail
+      description: |
+        Updates trail information with partial data.
+        Only provided fields will be updated.
+
+        To change trail creator, provide new creator's email.
+      operationId: trails.update
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          description: Unique identifier of trail to update
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        description: Partial trail data for update
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrailCreate"
+      responses:
+        "200":
+          description: Trail updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trail"
+        "404":
+          description: Trail not found or user email not found
+        "400":
+          description: Invalid input data
+
+    # DELETE /api/trails/{trail_id} - Delete trail
+    delete:
+      tags:
+        - Trails
+      summary: Delete a trail
+      description: |
+        Permanently removes a trail from the database.
+        All associated features are also deleted (CASCADE).
+        This operation cannot be undone.
+      operationId: trails.delete
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          description: Unique identifier of trail to delete
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Trail deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Trail with ID 3 successfully deleted"
+        "404":
+          description: Trail not found
+
+  # ----------------------------------------------------------------------------
+  # TRAIL FEATURES ENDPOINTS
+  # ----------------------------------------------------------------------------
+
+  /trails/{trail_id}/features:
+    # GET /api/trails/{trail_id}/features - Get trail features
+    get:
+      tags:
+        - Features
+      summary: Retrieve all features for a trail
+      description: |
+        Returns all features associated with a specific trail.
+        Features include natural landmarks, amenities, and trail characteristics.
+      operationId: features.read_by_trail
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          description: Unique identifier of the trail
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Features retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrailFeature"
+        "404":
+          description: Trail not found or no features exist
+
+  # ----------------------------------------------------------------------------
+  # DATABASE VIEW ENDPOINTS
+  # ----------------------------------------------------------------------------
+
+  /trails/view:
+    # GET /api/trails/view - Get trails from database view
+    get:
+      tags:
+        - Views
+      summary: Retrieve trails with creator info from view
+      description: |
+        Returns all trails from the vw_TrailsWithCreator database view.
+        This provides pre-joined data with calculated fields like days_since_created.
+      operationId: views.read_all
+      responses:
+        "200":
+          description: Trails retrieved from view
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrailView"
+
+  /trails/view/{trail_id}:
+    # GET /api/trails/view/{trail_id} - Get specific trail from view
+    get:
+      tags:
+        - Views
+      summary: Retrieve specific trail from view
+      description: |
+        Returns a single trail from the vw_TrailsWithCreator view
+        with creator information and calculated fields.
+      operationId: views.read_one
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          description: Unique identifier of the trail
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Trail retrieved from view
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrailView"
+        "404":
+          description: Trail not found in view
+
+  # ----------------------------------------------------------------------------
+  # USER ENDPOINTS (Read-Only)
+  # ----------------------------------------------------------------------------
+
+  /users:
+    # GET /api/users - List all users
+    get:
+      tags:
+        - Users
+      summary: Retrieve all users
+      description: |
+        Returns a complete list of registered users.
+        User management (create/update/delete) is handled by external authentication service.
+      operationId: users.read_all
+      responses:
+        "200":
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{user_id}:
+    # GET /api/users/{user_id} - Get specific user
+    get:
+      tags:
+        - Users
+      summary: Retrieve a specific user by ID
+      description: |
+        Returns complete information for a single user
+        including their created trails.
+      operationId: users.read_one
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: User found and returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+
+# ==============================================================================
+# REUSABLE SCHEMAS
+# ==============================================================================
+components:
+  schemas:
+    # --------------------------------------------------------------------------
+    # TRAIL SCHEMAS
+    # --------------------------------------------------------------------------
+
+    TrailCreate:
+      type: object
+      description: Schema for creating or updating trails
+      required:
+        - trail_name
+        - difficulty
+        - location
+        - length_km
+        - route_type
+        - email
+      properties:
+        trail_name:
+          type: string
+          description: Name of the trail
+          example: "Plymbridge Circular"
+          minLength: 1
+          maxLength: 255
+
+        difficulty:
+          type: string
+          description: Trail difficulty level
+          enum: [Easy, Moderate, Hard]
+          example: "Easy"
+
+        location:
+          type: string
+          description: Geographic location of trail
+          example: "Plymouth, Devon, England"
+          minLength: 1
+          maxLength: 255
+
+        length_km:
+          type: number
+          description: Trail length in kilometers
+          example: 5.2
+          minimum: 0.1
+          maximum: 999.99
+
+        route_type:
+          type: string
+          description: Type of trail route
+          enum: [Loop, Out & back, Point to point]
+          example: "Loop"
+
+        elevation_gain_m:
+          type: integer
+          description: Total elevation gain in meters (optional)
+          example: 147
+          minimum: 0
+          nullable: true
+
+        description_text:
+          type: string
+          description: Detailed trail description (optional)
+          example: "Scenic circular walk through Plymbridge Woods"
+          nullable: true
+
+        overall_rating:
+          type: number
+          description: Average user rating (optional)
+          example: 4.7
+          minimum: 1.0
+          maximum: 5.0
+          nullable: true
+
+        email:
+          type: string
+          format: email
+          description: Email of user creating/owning the trail
+          example: "grace@plymouth.ac.uk"
+
+    Trail:
+      type: object
+      description: Complete trail object with all fields
+      allOf:
+        - $ref: "#/components/schemas/TrailCreate"
+        - type: object
+          properties:
+            trail_id:
+              type: integer
+              description: Unique trail identifier
+              example: 1
+
+            created_date:
+              type: string
+              format: date-time
+              description: Timestamp when trail was created
+              example: "2025-11-01T10:30:00"
+
+            created_by:
+              type: integer
+              description: User ID of trail creator
+              example: 1
+
+    # --------------------------------------------------------------------------
+    # TRAIL FEATURE SCHEMA
+    # --------------------------------------------------------------------------
+
+    TrailFeature:
+      type: object
+      description: Feature associated with a trail
+      properties:
+        feature_name:
+          type: string
+          description: Name of the feature
+          example: "River"
+
+        feature_description:
+          type: string
+          description: Detailed description of feature
+          example: "River Plym runs alongside the trail"
+          nullable: true
+
+    # --------------------------------------------------------------------------
+    # DATABASE VIEW SCHEMA
+    # --------------------------------------------------------------------------
+
+    TrailView:
+      type: object
+      description: Trail data from vw_TrailsWithCreator view
+      properties:
+        trail_id:
+          type: integer
+          example: 1
+
+        trail_name:
+          type: string
+          example: "Plymbridge Circular"
+
+        difficulty:
+          type: string
+          example: "Easy"
+
+        location:
+          type: string
+          example: "Plymouth, Devon, England"
+
+        length_km:
+          type: number
+          example: 5.2
+
+        route_type:
+          type: string
+          example: "Loop"
+
+        overall_rating:
+          type: number
+          example: 4.7
+          nullable: true
+
+        creator_username:
+          type: string
+          description: Username of trail creator
+          example: "grace123"
+
+        creator_email:
+          type: string
+          format: email
+          description: Email of trail creator
+          example: "grace@plymouth.ac.uk"
+
+        creator_role:
+          type: string
+          description: Role of trail creator
+          example: "user"
+
+        days_since_created:
+          type: integer
+          description: Number of days since trail was created
+          example: 15
+
+    # --------------------------------------------------------------------------
+    # USER SCHEMA
+    # --------------------------------------------------------------------------
+
+    User:
+      type: object
+      description: System user who can create trails
+      properties:
+        user_id:
+          type: integer
+          description: Unique user identifier
+          example: 1
+
+        username:
+          type: string
+          description: Display name
+          example: "grace123"
+
+        full_name:
+          type: string
+          description: Full legal name
+          example: "Grace Hopper"
+          nullable: true
+
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "grace@plymouth.ac.uk"
+
+        role:
+          type: string
+          description: User role for access control
+          enum: [user, admin]
+          example: "user"
+
+        registration_date:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2025-01-01T08:30:00"
